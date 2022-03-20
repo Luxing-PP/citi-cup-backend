@@ -40,8 +40,8 @@ public class FinanceServiceImpl implements FinanceService {
 	 */
 	private static class ThreadPool{
 		private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-			0,
-			8,
+			4,
+			9,
 			60,
 			TimeUnit.SECONDS,
 			new LinkedBlockingDeque<>()
