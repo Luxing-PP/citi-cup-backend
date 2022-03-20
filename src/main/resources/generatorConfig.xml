@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+	PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+	"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<properties resource="generator.properties"/>
+	<context id="MySqlContext" targetRuntime="MyBatis3Simple">
+		<property name="beginningDelimiter" value="`"/>
+		<property name="endingDelimiter" value="`"/>
+		<property name="javaFileEncoding" value="UTF-8"/>
+		<!-- 为模型生成序列化方法 感觉没必要，注释掉了-->
+		<!--        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>-->
+		<!-- 为生成的Java模型创建一个toString方法 -->
+		<plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+		<!--可以自定义生成model的代码注释-->
+		<commentGenerator>
+			<property name="suppressDate" value="true"/>
+			<property name="suppressAllComments" value="true"/>
+		</commentGenerator>
+		<!--配置数据库连接-->
+		<jdbcConnection driverClass="${jdbc.driverClass}"
+						connectionURL="${jdbc.connectionURL}"
+						userId="${jdbc.userId}"
+						password="123456">
+			<!--	todo-->
+			<!--                        password="${jdbc.password}">-->
+
+		</jdbcConnection>
+		<!--指定生成model（感觉应该是PO）的路径-->
+		<javaModelGenerator
+			targetPackage="com.nju.edu.citibackend.po.verifyAuthorization"
+			targetProject="src\main\java">
+			<property name="enableSubPackages" value="true"/>
+		</javaModelGenerator>
+		<!--指定生成mapper接口的的路径-->
+		<sqlMapGenerator targetPackage="mapper.verifyAuthorization"
+						 targetProject="src\main\resources"/>
+		<javaClientGenerator type="XMLMAPPER"
+							 targetPackage="com.nju.edu.citibackend.mapperservice.verifyAuthorization"
+							 targetProject="src\main\java">
+			<property name="enableSubPackages" value="true"/>
+		</javaClientGenerator>
+		<!--生成全部表tableName设为%-->
+		<!-- todo
+			1. 建议使用完之后把对应表注释掉，避免后续使用误操作覆盖了以前写的xml，虽然有git可以rollback，但还是很闹心
+			2. 具体参数可以参考我群里发的链接，简单使用就是把objectName 改成PO名字，table改成数据库里对应表名字即可
+			3. 使用流程就是，写sql文件，运行sql文件，在这里添加一行<table> 然后运行util中的Generator，用完之后注释掉
+		-->
+		<table enableCountByExample="false" enableDeleteByExample="false"
+			   enableSelectByExample="false" enableUpdateByExample="false"
+			   tableName="role" domainObjectName="Role">
+
+		</table>
+		<table enableCountByExample="false" enableDeleteByExample="false"
+			   enableSelectByExample="false" enableUpdateByExample="false"
+			   tableName="user_role" domainObjectName="UserRole">
+
+		</table>
+		<table enableCountByExample="false" enableDeleteByExample="false"
+			   enableSelectByExample="false" enableUpdateByExample="false"
+			   tableName="role_permission" domainObjectName="RolePermission">
+
+		</table>
+	</context>
+</generatorConfiguration>

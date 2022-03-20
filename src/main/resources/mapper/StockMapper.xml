@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.Stock.StockMapper">
+	<resultMap id="BaseResultMap"
+			   type="com.nju.edu.citibackend.po.Stock.StockInfo">
+		<id column="code" property="code" javaType="String"/>
+		<result column="name" property="name" javaType="String"/>
+		<result column="npv" property="npv"/>
+		<collection property="k_info"
+					ofType="com.nju.edu.citibackend.po.Stock.StockDayK">
+			<result column="open" property="open"/>
+			<result column="close" property="close"/>
+			<result column="date" property="date"/>
+		</collection>
+	</resultMap>
+
+	<resultMap id="AdditionInfo"
+			   type="com.nju.edu.citibackend.po.Stock.StockAddition">
+		<result column="peTTM" property="peTTM"/>
+		<result column="pbMRQ" property="pbMRQ"/>
+		<result column="volume" property="volume"/>
+	</resultMap>
+
+	<!-- 给日收益率？ datediff(max,min)-->
+	<select id="getStockInfo" parameterType="String" resultMap="BaseResultMap">
+		SELECT s.code,
+			   s.name,
+			   sd.open,
+			   sd.close,
+			   sd.date,
+			   (SELECT (b.close - a.close) / a.close / 3
+				FROM (SELECT code, close, date as min
+					  FROM `stock_day`
+					  WHERE code = #{code}
+						and date = (
+						  SELECT MIN(date)
+						  FROM stock_day
+						  WHERE code = #{code}
+							and date > (
+							  SELECT MAX(date) - interval 3 month
+							  FROM stock_day
+							  WHERE code = #{code}
+							  GROUP BY code))
+					 ) a
+						 LEFT JOIN
+					 (SELECT code, close, date as max
+					  FROM `stock_day`
+					  WHERE code = #{code}
+						and date = (
+						  SELECT MAX(date)
+						  FROM stock_day
+						  WHERE code = #{code}
+						  GROUP BY code
+					  )
+					 ) b ON a.code = b.code
+			   ) as npv
+		FROM `stocks` s
+				 LEFT JOIN `stock_day` sd ON s.code = sd.code
+		WHERE s.code = #{code}
+		  and sd.date > (
+			SELECT MAX(date) - interval 3 month
+			FROM stock_day
+			WHERE code = #{code}
+			GROUP BY code
+		)
+	</select>
+
+	<select id="getAdditionInfo" parameterType="String"
+			resultMap="AdditionInfo">
+		SELECT code, peTTM, pbMRQ, volume
+		FROM `stock_day`
+		WHERE code = #{code}
+		  and date = (
+			SELECT MAX(date)
+			FROM stock_day
+			WHERE code = #{code}
+			GROUP BY code
+		)
+	</select>
+</mapper>

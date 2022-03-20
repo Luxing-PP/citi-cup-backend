@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.QuestionMapper">
+	<resultMap id="QuestionMap" type="com.nju.edu.citibackend.po.QuestionPO">
+		<id column="question_id" property="id" javaType="int"/>
+		<result column="question_type" property="type" jdbcType="INTEGER"
+				typeHandler="com.nju.edu.citibackend.config.ValueEnumTypeHandler"/>
+		<result column="question_content" property="content" javaType="String"/>
+		<result column="question_option" property="option" javaType="String"/>
+		<result column="image_path" property="path" javaType="String"/>
+	</resultMap>
+
+	<select id="queryQuestion" resultMap="QuestionMap">
+		select *
+		from quiz_question
+	</select>
+
+	<select id="queryQuestionByID" resultMap="QuestionMap">
+		select *
+		from quiz_question
+		where question_id = #{questionID}
+	</select>
+
+	<insert id="insertQuestion" parameterType="QuestionPO"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="question_id">
+		insert into quiz_question(question_type, question_content,
+								  question_option, image_path)
+		values (#{type, jdbcType=INTEGER, typeHandler=com.nju.edu.citibackend.config.ValueEnumTypeHandler},
+				#{content}, #{option}, #{path})
+	</insert>
+
+	<update id="updateQuestion" parameterType="QuestionPO"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="question_id">
+		update quiz_question
+		set
+		<if test="type != null">question_type =
+			#{type, jdbcType=INTEGER, typeHandler=com.nju.edu.citibackend.config.ValueEnumTypeHandler},
+		</if>
+		<if test="content != null">question_content = #{content},</if>
+		<if test="option != null">question_option = #{option},</if>
+		<if test="path != null">image_path = #{path}</if>
+		where question_id = #{id}
+	</update>
+
+
+	<delete id="deleteQuestionByID">
+		delete
+		from quiz_question
+		where question_id = #{questionID}
+	</delete>
+
+	<select id="queryQuestionByType" resultMap="QuestionMap">
+		select *
+		from quiz_question
+		where question_type =
+			  #{questionType, jdbcType=INTEGER, typeHandler=com.nju.edu.citibackend.config.ValueEnumTypeHandler}
+	</select>
+</mapper>

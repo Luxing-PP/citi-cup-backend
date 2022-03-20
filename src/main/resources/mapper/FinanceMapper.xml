@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.Stock.FinanceMapper">
+	<resultMap id="FutureResultMap"
+			   type="com.nju.edu.citibackend.po.Finance.FutureInfo">
+		<id column="code" property="code" javaType="String"/>
+		<result column="change2" property="change"/>
+		<result column="volume" property="volume"/>
+		<collection property="k_info"
+					ofType="com.nju.edu.citibackend.po.Finance.FutureWeekK">
+			<id column="date" property="date"/>
+			<result column="open" property="open"/>
+			<result column="close" property="close"/>
+		</collection>
+	</resultMap>
+
+	<resultMap id="BondResultMap"
+			   type="com.nju.edu.citibackend.po.Finance.BondInfo">
+		<id column="code" property="code" javaType="String"/>
+		<result column="change" property="change"/>
+		<result column="volume" property="volume"/>
+		<result column="volt" property="volt"/>
+		<result column="npv" property="npv"/>
+		<collection property="k_info"
+					ofType="com.nju.edu.citibackend.po.Finance.BondMonthK">
+			<id column="month" property="date"/>
+			<result column="open" property="open"/>
+			<result column="close" property="close"/>
+		</collection>
+	</resultMap>
+
+	<resultMap id="GoldResultMap"
+			   type="com.nju.edu.citibackend.po.Finance.GoldInfo">
+		<id column="code" property="code" javaType="String"/>
+		<result column="change" property="change"/>
+		<result column="volume" property="volume"/>
+		<result column="avg" property="avg"/>
+		<collection property="k_info"
+					ofType="com.nju.edu.citibackend.po.Finance.GoldMonthK">
+			<id column="month" property="date"/>
+			<result column="open" property="open"/>
+			<result column="close" property="close"/>
+		</collection>
+	</resultMap>
+
+	<insert id="insertFinanceResult">
+		insert into `user_finance_result`(`user_id`, `times`, `result`)
+		VALUES (#{user_id}, #{times}, #{result})
+	</insert>
+
+	<select id="selectFinanceResult" resultType="java.lang.String">
+		select result
+		from `user_finance_result`
+		where `user_id` = #{user_id}
+		  and `times` = #{times}
+	</select>
+
+	<select id="getFutureInfoByCode" parameterType="String"
+			resultMap="FutureResultMap">
+		select f1.code, f1.change2, f1.volume, f2.date, f2.open, f2.close
+		FROM `future_week` f1
+				 LEFT JOIN `future_week` f2 ON f1.code = f2.code
+		WHERE f1.code = #{code}
+		  and f1.date = (
+			SELECT MAX(date)
+			FROM `future_week`
+			WHERE code = #{code}
+			GROUP BY code
+		)
+		  and f2.date >= (f1.date - interval 6 month)
+	</select>
+
+	<select id="getBondInfoByCode" parameterType="String"
+			resultMap="BondResultMap">
+		select b1.code,
+			   b1.npv,
+			   b1.volt,
+			   b1.change,
+			   b1.volume,
+			   b2.month,
+			   b2.open,
+			   b2.close
+		FROM `bond_month` b1
+				 LEFT JOIN `bond_month` b2 ON b1.code = b2.code
+		WHERE b1.code = #{code}
+		  and b1.month = (
+			SELECT MAX(month)
+			FROM `bond_month`
+			WHERE code = #{code}
+			GROUP BY code
+		)
+		  and b2.month >= (b1.month - interval 24 month);
+	</select>
+
+	<select id="getGoldInfoByCode" parameterType="String"
+			resultMap="GoldResultMap">
+		select g1.code,
+			   g1.change,
+			   g1.avg,
+			   g1.volume,
+			   g2.month,
+			   g2.open,
+			   g2.close
+		FROM `gold_month` g1
+				 LEFT JOIN `gold_month` g2 ON g1.code = g2.code
+		WHERE g1.code = #{code}
+		  and g1.month = (
+			SELECT MAX(month)
+			FROM `gold_month`
+			WHERE code = #{code}
+			GROUP BY code
+		)
+		  and g2.month >= (g1.month - interval 24 month);
+	</select>
+</mapper>

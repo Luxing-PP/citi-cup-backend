@@ -1,0 +1,11 @@
+numpy==1.20.3
+scipy==1.7.1
+baidu-aip==2.2.18.0
+Flask==1.1.2
+librosa==0.9.1
+python_Levenshtein==0.12.2
+requests==2.26.0
+six==1.16.0
+tensorboardX==2.5
+tqdm==4.62.3
+pyaudio==0.2.11

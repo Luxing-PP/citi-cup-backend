@@ -1,0 +1,43 @@
+server:
+    #port: 8080
+    port: 8081
+    tomcat:
+        max-http-form-post-size: 8192
+        threads:
+            max: 2000
+        accept-count: 2000
+
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://124.223.105.99:3306/CITITest?characterEncoding=utf8&useUnicode=true&allowMultiQueries=true
+        username: root
+        # password: 123456
+        password: '#CITI123456'
+
+    mail:
+        default-encoding: UTF-8
+        from: garzhi2022@163.com
+        username: garzhi2022@163.com
+        password: FQCGSYAEULUKMBAU      # 授权码
+        host: smtp.163.com
+        port: 465 # smtp 25 smtps 465
+        protocol: smtps
+        properties:
+            mail:
+                smtp:
+                    auth: true # 使用
+                    starttls: # 使用 SSL 安全协议，须如下配置
+                        enable: true
+                        required: true
+
+mybatis:
+    mapper-locations: classpath:mapper/*.xml
+    type-aliases-package: com.nju.edu.citibackend.po
+    configuration:
+        # 下划线自动转驼峰
+        map-underscore-to-camel-case: true
+
+
+web:
+    file-upload-path: /app/

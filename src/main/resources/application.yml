@@ -1,0 +1,84 @@
+server:
+    #port: 8080
+    port: 8081
+    tomcat:
+        max-http-form-post-size: 8192
+        max-http-header-size: 8192
+        threads:
+            max: 2000
+        accept-count: 2000
+    ssl:
+        key-store: classpath:www.xjk-advisor.com.jks
+        key-store-password: 3wlt58mz7lf1o
+        key-store-type: JKS
+
+spring:
+    redis:
+        database: 0
+        host: 124.223.105.99
+        port: 6379
+        password:
+        jedis:
+            pool:
+                max-active: 20
+                max-wait: -1
+                max-idle: 8
+                min-idle: 0
+        timeout: 10000
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://124.223.105.99:3306/CITIDatabase?characterEncoding=utf8&useUnicode=true&allowMultiQueries=true&&useSSL=false
+        username: ENC(Rvm1ppBvxuCJz+JRlsNRIw==) # 数据库账号
+        password: ENC(iCJmGmoT2PN7V9jbdvFXtX5EPr1QFXD/) # 数据库密码
+
+    mvc:
+        static-path-pattern: /file/**
+
+    mail:
+        default-encoding: UTF-8
+        from: garzhi2022@163.com
+        username: garzhi2022@163.com
+        password: FQCGSYAEULUKMBAU      # 授权码
+        host: smtp.163.com
+        port: 465 # smtp 25 smtps 465
+        protocol: smtps
+        properties:
+            mail:
+                smtp:
+                    auth: true # 使用
+                    starttls: # 使用 SSL 安全协议，须如下配置
+                        enable: true
+                        required: true
+
+    servlet:
+        multipart:
+            max-file-size: 5MB
+            max-request-size: 10MB
+
+    web:
+        resources:
+            # 配置静态资源所在位置，注意这里会屏蔽/static/
+            static-locations:
+                - classpath:/images/
+                - classpath:/file/
+
+
+mybatis:
+    mapper-locations:
+        - classpath:mapper/*.xml
+        - classpath:mapper/*/*.xml
+    type-aliases-package: com.nju.edu.citibackend.po
+    configuration:
+        # 下划线自动转驼峰
+        map-underscore-to-camel-case: true
+
+
+web:
+    file-upload-path: /app/
+
+jasypt:
+    encryptor:
+        password: CITI
+        algorithm: PBEWithMD5AndDES
+        iv-generator-classname: org.jasypt.iv.NoIvGenerator
+

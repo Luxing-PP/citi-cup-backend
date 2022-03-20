@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.UserAnswerTimeMapper">
+	<resultMap id="TimeMap" type="com.nju.edu.citibackend.po.UserAnswerTimePO">
+		<id column="id" property="id" javaType="int"/>
+		<result column="user_id" property="userID" javaType="int"/>
+		<result column="answer_times" property="answerTimes" javaType="int"/>
+		<result column="answer_time" property="answerTime"
+				javaType="java.sql.Date" jdbcType="DATE"/>
+	</resultMap>
+
+	<select id="queryAllUserAnswerTime" resultMap="TimeMap">
+		select *
+		from user_answer_time
+		where user_id = #{userID}
+	</select>
+
+	<select id="queryUserAnswerTime" resultMap="TimeMap">
+		select *
+		from user_answer_time
+		where user_id = #{userID}
+		  and answer_times = #{answerTimes};
+	</select>
+
+	<insert id="insertUserAnswerTime"
+			parameterType="com.nju.edu.citibackend.po.UserAnswerTimePO"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into user_answer_time(user_id, answer_times, answer_time)
+		VALUES (#{userID}, #{answerTimes}, #{answerTime})
+	</insert>
+
+	<update id="updateUserAnswerTime"
+			parameterType="com.nju.edu.citibackend.po.UserAnswerTimePO"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		update user_answer_time
+		set
+		<if test="userID != null">user_id = #{userID},</if>
+		<if test="answerTimes != null">answer_times = #{answerTimes},</if>
+		<if test="answerTime != null">answer_time = #{answerTime}</if>
+		where id = #{id}
+	</update>
+
+	<delete id="deleteUserAnswerTime" parameterType="int">
+		delete
+		from user_answer_time
+		where id = #{id}
+	</delete>
+
+</mapper>

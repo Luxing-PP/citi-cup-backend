@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.ProductNPVMapper">
+	<resultMap id="BaseResultMap" type="com.nju.edu.citibackend.po.ProductNPV">
+		<id column="id" jdbcType="BIGINT" property="id"/>
+		<result column="product_id" jdbcType="BIGINT" property="productId"/>
+		<result column="time" jdbcType="TIMESTAMP" property="time"/>
+		<result column="npv" jdbcType="DECIMAL" property="npv"/>
+	</resultMap>
+	<delete id="deleteByProductId" parameterType="java.lang.Long">
+		delete
+		from `product_npv`
+		where product_id = #{productID}
+	</delete>
+	<insert id="insert" parameterType="com.nju.edu.citibackend.po.ProductNPV">
+		insert into product_npv (id, product_id, time,
+								 npv)
+		values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT},
+				#{time,jdbcType=TIMESTAMP},
+				#{npv,jdbcType=DECIMAL})
+	</insert>
+	<select id="selectByProductCode" parameterType="java.lang.String"
+			resultMap="BaseResultMap">
+		select id, product_code, time, npv
+		FROM product_npv
+		WHERE product_code = #{productCode}
+		ORDER BY TIME
+		LIMIT 7;
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+			resultMap="BaseResultMap">
+		select id, product_id, time, npv
+		from product_npv
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select id, product_id, time, npv
+		from product_npv
+	</select>
+</mapper>

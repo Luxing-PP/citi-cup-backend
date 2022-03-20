@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.ProductMapper">
+	<resultMap id="BaseResultMap" type="com.nju.edu.citibackend.po.Product">
+		<id column="id" jdbcType="BIGINT" property="id"/>
+		<result column="product_code" jdbcType="VARCHAR"
+				property="productCode"/>
+		<result column="product_name" jdbcType="VARCHAR"
+				property="productName"/>
+		<result column="rate" jdbcType="DECIMAL" property="rateOfReturn"/>
+	</resultMap>
+	<delete id="deleteByProductCode" parameterType="java.lang.String">
+		delete
+		from product_npv
+		where `product_code` = #{productCode,jdbcType=VARCHAR};
+
+		delete
+		from product
+		where `product_code` = #{productCode,jdbcType=VARCHAR};
+	</delete>
+
+	<insert id="insert" parameterType="com.nju.edu.citibackend.po.Product"
+			useGeneratedKeys="true" keyProperty="id">
+		insert into product (product_code, product_name)
+		values (#{productCode,jdbcType=VARCHAR},
+				#{productName,jdbcType=VARCHAR})
+	</insert>
+	<update id="updateByPrimaryKey"
+			parameterType="com.nju.edu.citibackend.po.Product">
+		update product
+		set product_code = #{productCode,jdbcType=VARCHAR},
+			product_name = #{productName,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+			resultMap="BaseResultMap">
+		select id, product_code, product_name
+		from product
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select id, a.product_code, product_name, rate
+		from product a
+				 JOIN
+			 (select v1.product_code, (v1.npv - v2.npv) / v2.npv as rate
+			  from product_npv v1
+					   left join product_npv v2
+								 on v1.time - interval 6 day = v2.time and
+									v1.product_code = v2.product_code
+			  where v2.npv is not null) b
+			 ON a.product_code = b.product_code;
+	</select>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.nju.edu.citibackend.mapperservice.verifyAuthorization.RolePermissionMapper">
+	<resultMap id="BaseResultMap"
+			   type="com.nju.edu.citibackend.po.verifyAuthorization.RolePermission">
+		<id column="role_id" jdbcType="INTEGER" property="roleId"/>
+		<id column="permission_id" jdbcType="INTEGER" property="permissionId"/>
+	</resultMap>
+	<delete id="deleteByPrimaryKey" parameterType="map">
+		delete
+		from role_permission
+		where role_id = #{roleId,jdbcType=INTEGER}
+		  and permission_id = #{permissionId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+			parameterType="com.nju.edu.citibackend.po.verifyAuthorization.RolePermission">
+		insert into role_permission (role_id, permission_id)
+		values (#{roleId,jdbcType=INTEGER}, #{permissionId,jdbcType=INTEGER})
+	</insert>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select role_id, permission_id
+		from role_permission
+	</select>
+
+	<!-- 通过roleIds查询PermissionIds -->
+	<select id="getPermissionIdsByRoleIds" resultType="int">
+		select * from role_permission
+		where role_id in
+		<foreach collection="roleIds" item="roleId" index="index" open="("
+				 close=")" separator=",">
+			#{roleId}
+		</foreach>
+	</select>
+
+</mapper>

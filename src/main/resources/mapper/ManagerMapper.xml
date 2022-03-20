@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--	//todo dao接口的全类名-->
+<mapper namespace="com.nju.edu.citibackend.mapperservice.ManagerMapper">
+	<!--使用resultMap定义列和属性的关系-->
+	<!--定义resultMap  在mapper文件中
+    id:给resultMap的映射关系起个名称，唯一值
+    type:java类型的全限定名称
+-->
+	<resultMap id="BaseResultMap" type="UserPO">
+		<!--定义列名和属性名的对应-->
+		<!--主键类型使用id标签-->
+		<id column="user_id" property="id" javaType="int"/>
+		<!--非主键类型使用result标签-->
+		<result column="email" property="email" javaType="String"/>
+		<result column="username" property="username"
+				javaType="String"></result>
+		<result column="user_password" property="password" javaType="String"/>
+		<result column="user_phone" property="phone" javaType="String"/>
+	</resultMap>
+
+	<select id="getAllUsers" resultMap="BaseResultMap">
+		SELECT *
+		FROM `user`
+	</select>
+
+</mapper>

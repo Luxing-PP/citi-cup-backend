@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.UserMapper">
+	<resultMap id="BaseResultMap" type="com.nju.edu.citibackend.po.UserPO">
+		<id column="user_id" property="id" javaType="int"/>
+		<result column="user_name" property="userName" javaType="String"/>
+		<result column="email" property="email" javaType="String"/>
+		<result column="user_phone" property="phone" javaType="String"/>
+		<result column="user_password" property="password" javaType="String"/>
+	</resultMap>
+
+	<select id="selectUserById" parameterType="int" resultMap="BaseResultMap">
+		SELECT *
+		FROM `user`
+		where user_id = #{id};
+	</select>
+
+	<select id="selectUserByPhone" parameterType="java.lang.String"
+			resultMap="BaseResultMap">
+		SELECT *
+		FROM `user`
+		where `user_phone` = #{phone};
+	</select>
+
+    <select id="selectUserName" resultType="java.lang.String">
+		SELECT user_name
+		FROM `user`
+		WHERE `user_id` = #{userid};
+	</select>
+
+    <insert id="insertUser" parameterType="com.nju.edu.citibackend.po.UserPO"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="user_id">
+		insert into `user`(user_name, email, user_phone, user_password)
+		values (#{userName}, #{email}, #{phone}, #{password});
+	</insert>
+
+	<delete id="deleteUser" parameterType="int">
+		delete
+		from user
+		where user_id = #{id};
+	</delete>
+</mapper>

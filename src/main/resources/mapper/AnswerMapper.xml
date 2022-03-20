@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.citibackend.mapperservice.AnswerMapper">
+	<resultMap id="AnswerMap" type="com.nju.edu.citibackend.po.AnswerPO">
+		<id column="answer_id" property="id" javaType="java.lang.Integer"/>
+		<result column="user_id" property="userID"
+				javaType="java.lang.Integer"/>
+		<result column="question_id" property="questionID"
+				javaType="java.lang.Integer"/>
+		<result column="question_type" property="questionType"
+				javaType="com.nju.edu.citibackend.enums.QuestionType"
+				jdbcType="INTEGER"
+				typeHandler="com.nju.edu.citibackend.config.ValueEnumTypeHandler"/>
+		<result column="answer_path" property="answerPath"
+				javaType="java.lang.String"/>
+		<result column="answer_times" property="answerTimes"
+				javaType="java.lang.Integer"/>
+	</resultMap>
+
+	<select id="queryAnswerList" resultMap="AnswerMap">
+		select *
+		from quiz_answer
+		order by answer_id asc
+	</select>
+
+	<select id="queryAnswerByID" resultMap="AnswerMap" parameterType="int">
+		select *
+		from quiz_answer
+		where answer_id = #{answerID}
+	</select>
+
+	<select id="queryAnswerByUserID" resultMap="AnswerMap" parameterType="int">
+		select *
+		from quiz_answer
+		where user_id = #{userID}
+		order by user_id asc
+	</select>
+
+	<select id="queryUserAllAnswerCount" resultType="int" parameterType="int">
+		select COUNT(*)
+		from quiz_answer
+		where user_id = #{userID}
+		group by answer_times
+	</select>
+
+	<select id="queryUserAnswerCount" resultType="int">
+		select COUNT(*)
+		from quiz_answer
+		where user_id = #{userID}
+		  and answer_times = #{answerTimes}
+	</select>
+
+	<insert id="insertAnswer"
+			parameterType="com.nju.edu.citibackend.po.AnswerPO"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="answer_id">
+		insert into quiz_answer(user_id, question_id, question_type,
+								answer_path, answer_times)
+		values (#{userID}, #{questionID},
+				#{questionType, jdbcType=INTEGER, typeHandler=com.nju.edu.citibackend.config.ValueEnumTypeHandler},
+				#{answerPath},
+				#{answerTimes})
+	</insert>
+
+	<delete id="deleteAnswer" parameterType="int">
+		delete
+		from quiz_answer
+		where answer_id = #{id}
+	</delete>
+
+	<update id="updateAnswer"
+			parameterType="com.nju.edu.citibackend.po.AnswerPO">
+		update quiz_answer
+		set
+		<if test="questionID != null">question_id = #{questionID},</if>
+		<if test="userID != null">user_id = #{userID},</if>
+		<if test="questionType != null">question_type =
+			#{questionType, jdbcType=INTEGER, typeHandler=com.nju.edu.citibackend.config.ValueEnumTypeHandler},
+		</if>
+		<if test="answerTimes != null">answer_times = #{answerTimes},</if>
+		<if test="answerPath != null">answer_path = #{answerPath}</if>
+		where answer_id = #{id}
+	</update>
+
+	<update id="updateAnswerPath"
+			parameterType="com.nju.edu.citibackend.po.AnswerPO">
+		update quiz_answer
+		set
+		<if test="answerPath != null">answer_path = #{answerPath}</if>
+		where answer_id = #{id}
+	</update>
+</mapper>
