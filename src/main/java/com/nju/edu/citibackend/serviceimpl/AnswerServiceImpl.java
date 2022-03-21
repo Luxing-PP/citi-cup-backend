@@ -75,6 +75,10 @@ public class AnswerServiceImpl implements AnswerService {
 			return false;
 		}
 		AnswerPO answerPO = new AnswerPO(answerVO);
+		// 需要判断answerPO的一些信息
+		if (answerPO.getId() == null || answerPO.getQuestionID() == null) {
+			return false;
+		}
 		int i = answerMapper.insertAnswer(answerPO);
 		answerVO.setId(answerPO.getId());
 

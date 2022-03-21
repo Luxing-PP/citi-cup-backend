@@ -61,6 +61,8 @@ spring:
             static-locations:
                 - classpath:/images/
                 - classpath:/file/
+                - classpath:/static/
+                - classpath:/META-INF/resources/
 
 
 mybatis:

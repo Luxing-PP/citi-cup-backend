@@ -12,6 +12,8 @@ import com.nju.edu.citibackend.util.PythonUtil;
 import com.nju.edu.citibackend.util.WordCloudUtil;
 import com.nju.edu.citibackend.vo.AnswerVO;
 import com.nju.edu.citibackend.vo.QuestionVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,8 @@ public class QuestionServiceImpl implements QuestionService {
 
 	private QuestionMapper questionMapper;
 	private UserAnswerTimeMapper userAnswerTimeMapper;
+
+	private static final Logger logger = LoggerFactory.getLogger(PythonUtil.class);
 
 	@Autowired
 	public QuestionServiceImpl(QuestionMapper questionMapper, UserAnswerTimeMapper userAnswerTimeMapper) {
@@ -62,11 +66,12 @@ public class QuestionServiceImpl implements QuestionService {
 			return new Pair<>(null, "请重新输入语音");
 		}
 
+		logger.info("content: " + content);
 		int nextQuestionID = getNextQuestionID(content);
-		LogUtil.writeLog("content: " + content);
-		LogUtil.writeLog("nextQuestionID: " + nextQuestionID);
 		String word = getWord(content, questionID);
-		LogUtil.writeLog("word: " + word);
+		logger.info("nextQuestionID: " + nextQuestionID);
+		logger.info("word: " + word);
+
 		// 判断出错逻辑
 		if (nextQuestionID == -1) {
 			return new Pair<>(null, "请重新输入语音");
@@ -140,23 +145,21 @@ public class QuestionServiceImpl implements QuestionService {
 		return list;
 	}
 
-	public static int getNextQuestionID(String content) {
+	public int getNextQuestionID(String content) {
 		// id起始的索引
 		int idIndex = content.indexOf("next_id:") + "next_id:".length();
 		int id = -1;
 		// fixme: 因为题目最多只有两位数，所以这里就用是不是空格来判断了
-		if (idIndex < content.length() && content.charAt(idIndex + 1) == ' ') {
-			// 说明id是一位数
-			id = Integer.parseInt(content.substring(idIndex, idIndex + 1));
-		} else if (idIndex < content.length()) {
-			// 说明id是两位数
-			id = Integer.parseInt(content.substring(idIndex, idIndex + 2));
+		if (idIndex < content.length()) {
+			String str = content.substring(idIndex, idIndex + 2).trim();
+			logger.debug("id = " + str);
+			id = Integer.parseInt(str);
 		}
 
 		return id;
 	}
 
-	public static String getWord(String content, int questionID) {
+	public String getWord(String content, int questionID) {
 		// 词云起始的索引
 		// 注意这里输出content有两个info:, 需要获取最后一个
 		int wordIndex = content.lastIndexOf("info:") + "info:".length();
